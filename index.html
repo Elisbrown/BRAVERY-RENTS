@@ -565,14 +565,16 @@
       }
       .scale-wrapper {
         transform: none !important;
-        width: 100% !important;
+        width: 210mm !important;
         height: auto !important;
       }
       .scale-container {
         transform: none !important;
         display: block !important;
         gap: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
       .a4-page {
         width: 210mm !important;
@@ -584,6 +586,7 @@
         break-after: page !important;
         position: relative !important;
         display: block !important;
+        overflow: hidden !important;
       }
       .a4-page:last-child {
         page-break-after: avoid !important;
@@ -1658,15 +1661,40 @@
     }
 
     function generateQRCodes() {
-      const qrEn = `LE SANCTUAIRE DES INTELLOS - RECEIPT\nNo: ${state.invoiceNumber}\nTenant: ${state.tenantName}\nPaid: ${formatCurrencyEN(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'en')}`;
-      const qrFr = `LE SANCTUAIRE DES INTELLOS - REÇU\nNo: ${state.invoiceNumber}\nLocataire: ${state.tenantName}\nPayé: ${formatCurrencyFR(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'fr')}`;
+      // UTF-8 Helper for QRCode.js to support accents like 'É', 'ç'
+      const encodeUTF8 = (str) => {
+        return unescape(encodeURIComponent(str));
+      };
+
+      const qrEn = encodeUTF8(`LE SANCTUAIRE DES INTELLOS - RECEIPT\nNo: ${state.invoiceNumber}\nTenant: ${state.tenantName}\nPaid: ${formatCurrencyEN(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'en')}`);
+      const qrFr = encodeUTF8(`LE SANCTUAIRE DES INTELLOS - REÇU\nNo: ${state.invoiceNumber}\nLocataire: ${state.tenantName}\nPayé: ${formatCurrencyFR(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'fr')}`);
       
       const dEn = document.getElementById('qrcode-en');
       const dFr = document.getElementById('qrcode-fr');
-      dEn.innerHTML = ''; dFr.innerHTML = '';
+      if (!dEn || !dFr) return;
+      
+      dEn.innerHTML = ''; 
+      dFr.innerHTML = '';
+      
       if (typeof QRCode !== 'undefined') {
-        new QRCode(dEn, { text: qrEn, width: 160, height: 160, colorDark: '#0b1b33' });
-        new QRCode(dFr, { text: qrFr, width: 160, height: 160, colorDark: '#0b1b33' });
+        try {
+          new QRCode(dEn, { 
+            text: qrEn, 
+            width: 160, 
+            height: 160, 
+            colorDark: '#0b1b33',
+            correctLevel: QRCode.CorrectLevel.M 
+          });
+          new QRCode(dFr, { 
+            text: qrFr, 
+            width: 160, 
+            height: 160, 
+            colorDark: '#0b1b33',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        } catch (err) {
+          console.error("QR Generation error:", err);
+        }
       }
     }
 
@@ -1675,11 +1703,32 @@
       if (!form.checkValidity()) { form.reportValidity(); return; }
       const element = document.querySelector('.scale-container');
       const wrapper = document.querySelector('.scale-wrapper');
+      
+      // Capture current scale to restore later
       const currentScale = getComputedStyle(wrapper).getPropertyValue('--preview-scale');
+      
+      // Set scale to 1 for clean PDF capture
       wrapper.style.setProperty('--preview-scale', '1');
       wrapper.style.height = 'auto';
-      const opt = { margin:0, filename:`Sanctuaire_${state.invoiceNumber}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} };
+
+      const opt = { 
+        margin: 0, 
+        filename: `Sanctuaire_${state.invoiceNumber}.pdf`, 
+        image: { type: 'jpeg', quality: 1.0 }, 
+        html2canvas: { 
+          scale: 4, // Ultra-crisp quality
+          useCORS: true, 
+          letterRendering: true,
+          scrollY: 0,
+          dpi: 300,
+          imageTimeout: 0
+        }, 
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'], before: '.a4-page' }
+      };
+      
       html2pdf().set(opt).from(element).save().then(() => {
+        // Restore scaling after download
         wrapper.style.setProperty('--preview-scale', currentScale);
         handleScaling();
       });
