@@ -69,8 +69,8 @@
 
     /* LEFT SIDE: INPUT FORM PANEL */
     .input-panel {
-      width: 460px;
-      min-width: 460px;
+      width: 420px;
+      min-width: 420px;
       background-color: #ffffff;
       border-right: 1px solid #e2e8f0;
       padding: 0;
@@ -79,6 +79,52 @@
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
+    }
+
+    /* NAVIGATION SIDEBAR */
+    .app-sidebar {
+      width: 80px;
+      min-width: 80px;
+      background-color: var(--primary-navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 0;
+      gap: 1.5rem;
+      z-index: 20;
+    }
+    .nav-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      opacity: 0.6;
+    }
+    .nav-icon:hover, .nav-icon.active {
+      background-color: rgba(255,255,255,0.1);
+      opacity: 1;
+    }
+    .nav-icon.active {
+      color: var(--accent-gold);
+    }
+    
+    /* View Visibility - Now handled by Bootstrap Tab classes */
+    .tab-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .tab-pane {
+      height: 100%;
+    }
+    .tab-pane.active {
+      display: flex;
+      flex-direction: column;
     }
     
     .panel-header {
@@ -95,6 +141,21 @@
       padding: 1.5rem;
       flex-grow: 1;
     }
+
+    /* TABLE STYLES */
+    .crud-table {
+      font-size: 13px;
+    }
+    .crud-table th {
+      background-color: #f8fafc;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .btn-navy { background-color: var(--primary-navy); color: #fff; }
+    .btn-navy:hover { background-color: #1a2a44; color: #fff; }
 
     /* DISCOUNT BADGE Alert */
     .discount-badge-alert {
@@ -436,6 +497,15 @@
         height: auto;
         width: 100%;
       }
+      .app-sidebar {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0 1rem;
+        position: sticky;
+        top: 0;
+      }
       .input-panel {
         width: 100%;
         min-width: 100%;
@@ -539,6 +609,30 @@
 
   <div class="app-container">
     
+    <!-- NAVIGATION SIDEBAR -->
+    <nav class="app-sidebar nav nav-pills" id="main-nav" role="tablist">
+      <button class="nav-icon active border-0 bg-transparent" id="tab-generator" data-bs-toggle="pill" data-bs-target="#view-generator" type="button" role="tab" title="Generate Invoice">
+        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </button>
+      <button class="nav-icon border-0 bg-transparent" id="tab-tenants" data-bs-toggle="pill" data-bs-target="#view-tenants" type="button" role="tab" title="Manage Tenants">
+        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+      </button>
+      <button class="nav-icon border-0 bg-transparent" id="tab-records" data-bs-toggle="pill" data-bs-target="#view-records" type="button" role="tab" title="Payment Records">
+        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </button>
+      <button class="nav-icon border-0 bg-transparent" id="tab-settings" data-bs-toggle="pill" data-bs-target="#view-settings" type="button" role="tab" title="Database Settings">
+        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+        </svg>
+      </button>
+    </nav>
+    
     <!-- LEFT PANEL: DATA ENTRY FORM -->
     <aside class="input-panel">
       
@@ -546,24 +640,34 @@
         <img src="Main-desktop-Navy-Black.svg" alt="Le Sanctuaire Logo" class="brand-logo-img" style="height: 60px;">
       </div>
       
-      <div class="panel-content">
-        <form id="invoice-form" onsubmit="event.preventDefault();">
-          
-          <!-- Section 1: Tenant Information -->
-          <div class="card mb-3 shadow-sm border-0">
-            <div class="card-header bg-white py-3 border-0">
-              <h3 class="card-title h6 mb-0 fw-bold text-navy text-uppercase d-flex align-items-center gap-2">
-                <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v-2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
-                </svg>
-                Tenant Details
-              </h3>
-            </div>
-            <div class="card-body pt-0">
-              <div class="mb-3">
-                <label for="tenantName" class="form-label small fw-bold text-muted text-uppercase" style="font-size: 10px;">Tenant Name</label>
-                <input type="text" id="tenantName" class="form-control" placeholder="e.g. John Doe" required>
-              </div>
+      <div class="tab-content h-100 overflow-y-auto">
+        <!-- VIEW: GENERATOR -->
+        <div id="view-generator" class="tab-pane fade show active" role="tabpanel">
+          <div class="panel-content">
+            <form id="invoice-form" onsubmit="event.preventDefault();">
+              
+              <!-- Section 1: Tenant Information -->
+              <div class="card mb-3 shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-0">
+                  <h3 class="card-title h6 mb-0 fw-bold text-navy text-uppercase d-flex align-items-center gap-2">
+                    <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v-2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
+                    </svg>
+                    Tenant Details
+                  </h3>
+                </div>
+                <div class="card-body pt-0">
+                  <div class="mb-3">
+                    <label for="tenantSelect" class="form-label small fw-bold text-muted text-uppercase" style="font-size: 10px;">Select Saved Tenant</label>
+                    <select id="tenantSelect" class="form-select form-select-sm mb-2" onchange="autoFillTenant(this.value)">
+                      <option value="">-- Manual Entry --</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="tenantName" class="form-label small fw-bold text-muted text-uppercase" style="font-size: 10px;">Tenant Name</label>
+                    <input type="text" id="tenantName" class="form-control" placeholder="e.g. John Doe" required>
+                  </div>
               
               <div class="row g-3">
                 <div class="col-6">
@@ -672,6 +776,12 @@
               </svg>
               Download PDF
             </button>
+            <button type="button" class="btn btn-outline-primary py-2 fw-bold text-uppercase small" onclick="saveRecord()" style="letter-spacing: 1px;">
+              <svg style="width: 18px; height: 18px; margin-right: 8px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+              </svg>
+              Save Record
+            </button>
             <button type="button" class="btn btn-outline-secondary py-2 fw-bold text-uppercase small" onclick="resetForm()" style="letter-spacing: 1px;">
               <svg style="width: 16px; height: 16px; margin-right: 8px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
@@ -681,9 +791,85 @@
           </div>
           
         </form>
-      </div>
-    </aside>
-    
+        </div>
+        </div> <!-- end view-generator -->
+
+        <!-- VIEW: TENANTS -->
+        <div id="view-tenants" class="tab-pane fade" role="tabpanel">
+        <div class="panel-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="h6 mb-0 fw-bold text-navy text-uppercase">Tenant Management</h3>
+          <button class="btn btn-sm btn-primary" onclick="showAddTenantModal()">+ Add</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table crud-table align-middle">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Room</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tenant-list-body">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+        </div>
+        </div>
+
+        <!-- VIEW: RECORDS -->
+        <div id="view-records" class="tab-pane fade" role="tabpanel">
+        <div class="panel-content">
+        <h3 class="h6 mb-4 fw-bold text-navy text-uppercase">Payment History</h3>
+        <div class="table-responsive">
+          <table class="table crud-table align-middle">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Tenant</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="records-list-body">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+        </div>
+        </div>
+
+        <!-- VIEW: SETTINGS -->
+        <div id="view-settings" class="tab-pane fade" role="tabpanel">
+        <div class="panel-content">
+        <h3 class="h6 mb-4 fw-bold text-navy text-uppercase">Database Settings</h3>
+
+        <div class="card mb-3 border-0 shadow-sm">
+          <div class="card-body">
+            <h4 class="small fw-bold text-navy text-uppercase mb-2">JSON File Sync</h4>
+            <p class="text-muted small mb-3">Connect a local .json file for direct file writing (Direct Local File Writing).</p>
+            <button class="btn btn-navy btn-sm w-100" id="btn-connect-file" onclick="connectDBFile()">Connect DB File</button>
+            <div id="file-status" class="mt-2 text-success small fw-bold" style="display:none;">✓ Connected to local file</div>
+          </div>
+        </div>
+
+        <div class="card mb-3 border-0 shadow-sm">
+          <div class="card-body">
+            <h4 class="small fw-bold text-navy text-uppercase mb-2">Manual Backup</h4>
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-secondary btn-sm" onclick="exportDB()">Export JSON</button>
+              <button class="btn btn-outline-secondary btn-sm" onclick="triggerImport()">Import JSON</button>
+              <input type="file" id="import-input" style="display:none" onchange="importDB(event)">
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+        </div> <!-- end tab-content -->
+
+        </aside>    
     <!-- RIGHT PANEL: WYSIWYG LIVE PREVIEW -->
     <main class="preview-panel">
       <div class="scale-wrapper">
@@ -960,7 +1146,14 @@
   </div>
 
   <script>
-    // GLOBAL STATE MANAGEMENT
+    // GLOBAL DATABASE & STATE
+    let db = {
+      tenants: [],
+      records: []
+    };
+    
+    let fileHandle = null; // For Direct File Sync
+    
     const state = {
       tenantName: '',
       roomNumber: '',
@@ -979,7 +1172,7 @@
       paymentStatus: 'AWAITING DATA',
       balanceAmount: 0
     };
-    // DOM ELEMENTS SELECTORS
+
     const elForm = {
       tenantName: document.getElementById('tenantName'),
       roomNumber: document.getElementById('roomNumber'),
@@ -990,219 +1183,410 @@
       amountPaid: document.getElementById('amountPaid'),
       invoiceNumber: document.getElementById('invoiceNumber'),
       discountBadge: document.getElementById('discount-badge'),
-      toggleTemplatePrint: document.getElementById('toggleTemplatePrint')
+      toggleTemplatePrint: document.getElementById('toggleTemplatePrint'),
+      tenantSelect: document.getElementById('tenantSelect')
     };
 
-    // INITIALIZATION RUN
-    window.addEventListener('DOMContentLoaded', () => {
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', async () => {
+      loadDBFromLocalStorage();
+      
       const today = new Date();
-      
-      // Auto-generate invoice number
       generateInvoiceNumber(today);
-      
-      // Load initial state from DOM defaults
       readFormInputs();
-      
-      // Compute calculations and render previews
       performCalculations();
       
-      // Set up resize scale handlers
       window.addEventListener('resize', handleScaling);
-      handleScaling(); // Trigger first time
-      
-      // Bind live validation & keystroke sync
+      handleScaling();
       bindFormEvents();
+      bindCRUDEvents();
+      
+      refreshTenantList();
+      refreshRecordsList();
     });
 
-    // GEN INVOICE ID: YYMMDD-XXXX
+    // VIEW SWITCHING (Refactored for Bootstrap Tabs)
+    function switchView(viewName) {
+      const tabEl = document.querySelector(`#tab-${viewName}`);
+      if (tabEl) {
+        const tab = new bootstrap.Tab(tabEl);
+        tab.show();
+      }
+    }
+
+    // DATABASE CORE: LOAD/SAVE/SYNC
+    function loadDBFromLocalStorage() {
+      const stored = localStorage.getItem('sanctuaire_db');
+      if (stored) {
+        db = JSON.parse(stored);
+      }
+    }
+
+    async function saveDB() {
+      // Always save to localStorage for instant persistence
+      localStorage.setItem('sanctuaire_db', JSON.stringify(db));
+      
+      // Sync to local file if connected (Direct Local File Writing)
+      if (fileHandle) {
+        try {
+          const writable = await fileHandle.createWritable();
+          await writable.write(JSON.stringify(db, null, 2));
+          await writable.close();
+        } catch (err) {
+          console.error("File sync failed:", err);
+        }
+      }
+      
+      refreshTenantList();
+      refreshRecordsList();
+      updateTenantDropdown();
+    }
+
+    async function connectDBFile() {
+      try {
+        [fileHandle] = await window.showOpenFilePicker({
+          types: [{ description: 'JSON Database', accept: {'application/json': ['.json']} }],
+          multiple: false
+        });
+        
+        // Read file content into DB
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        if (content) {
+          db = JSON.parse(content);
+          saveDB(); // Update localStorage with file content
+        }
+        
+        document.getElementById('file-status').style.display = 'block';
+        document.getElementById('btn-connect-file').innerText = "Reconnect/Change File";
+        showAlert("Connected", "Successfully connected to: " + file.name);
+      } catch (err) {
+        console.warn("File picker cancelled or failed:", err);
+      }
+    }
+
+    function exportDB() {
+      const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sanctuaire_db_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+
+    function triggerImport() { document.getElementById('import-input').click(); }
+
+    function importDB(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.tenants && data.records) {
+            db = data;
+            saveDB();
+            showAlert("Success", "Database imported successfully!");
+          }
+        } catch (err) { showAlert("Error", "Invalid JSON file.", "error"); }
+      };
+      reader.readAsText(file);
+    }
+
+    let tenantModal = null;
+    let messageModal = null;
+    let confirmModal = null;
+
+    function bindCRUDEvents() {
+      tenantModal = new bootstrap.Modal(document.getElementById('tenantModal'));
+      messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+      confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+      
+      document.getElementById('tenant-crud-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveTenantFromModal();
+      });
+    }
+
+    // MODAL UTILITIES
+    function showAlert(title, text, type = 'success') {
+      document.getElementById('messageModalTitle').innerText = title;
+      document.getElementById('messageModalText').innerText = text;
+      const iconWrap = document.getElementById('messageModalIcon');
+      if (type === 'error') {
+        iconWrap.innerHTML = `<svg class="text-danger" style="width: 48px; height: 48px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else {
+        iconWrap.innerHTML = `<svg class="text-success" style="width: 48px; height: 48px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+      messageModal.show();
+    }
+
+    function showConfirm(text, onConfirm) {
+      document.getElementById('confirmModalText').innerText = text;
+      const btn = document.getElementById('confirmModalBtn');
+      // Remove old listeners to avoid stacking
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      newBtn.addEventListener('click', () => {
+        onConfirm();
+        confirmModal.hide();
+      });
+      confirmModal.show();
+    }
+
+    function refreshTenantList() {
+      const body = document.getElementById('tenant-list-body');
+      body.innerHTML = '';
+      db.tenants.sort((a,b) => a.name.localeCompare(b.name)).forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="fw-bold">${t.name}</div><div class="small text-muted">${t.phone}</div></td>
+          <td>${t.room}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn btn-sm btn-outline-primary" onclick="editTenant('${t.id}')">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteTenant('${t.id}')">×</button>
+            </div>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function showAddTenantModal() {
+      document.getElementById('tenantModalTitle').innerText = "Add Tenant";
+      document.getElementById('crud-tenant-id').value = '';
+      document.getElementById('tenant-crud-form').reset();
+      tenantModal.show();
+    }
+
+    function editTenant(id) {
+      const t = db.tenants.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById('tenantModalTitle').innerText = "Edit Tenant";
+      document.getElementById('crud-tenant-id').value = t.id;
+      document.getElementById('crud-tenant-name').value = t.name;
+      document.getElementById('crud-tenant-room').value = t.room;
+      document.getElementById('crud-tenant-phone').value = t.phone;
+      tenantModal.show();
+    }
+
+    function deleteTenant(id) {
+      showConfirm("Are you sure you want to delete this tenant? This will not delete their past payment records.", () => {
+        db.tenants = db.tenants.filter(x => x.id !== id);
+        saveDB();
+      });
+    }
+
+    function saveTenantFromModal() {
+      const id = document.getElementById('crud-tenant-id').value;
+      const tenantData = {
+        id: id || 'T' + Date.now(),
+        name: document.getElementById('crud-tenant-name').value.toUpperCase(),
+        room: document.getElementById('crud-tenant-room').value.toUpperCase(),
+        phone: document.getElementById('crud-tenant-phone').value.toUpperCase()
+      };
+
+      if (id) {
+        const idx = db.tenants.findIndex(x => x.id === id);
+        db.tenants[idx] = tenantData;
+      } else {
+        db.tenants.push(tenantData);
+      }
+      
+      saveDB();
+      tenantModal.hide();
+    }
+
+    function updateTenantDropdown() {
+      const select = elForm.tenantSelect;
+      const currentVal = select.value;
+      select.innerHTML = '<option value="">-- Manual Entry --</option>';
+      db.tenants.sort((a,b) => a.name.localeCompare(b.name)).forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.innerText = `${t.name} (ROOM ${t.room})`;
+        select.appendChild(opt);
+      });
+      select.value = currentVal;
+    }
+
+    function autoFillTenant(tenantId) {
+      if (!tenantId) return;
+      const t = db.tenants.find(x => x.id === tenantId);
+      if (t) {
+        elForm.tenantName.value = t.name;
+        elForm.roomNumber.value = t.room;
+        elForm.phoneNumber.value = t.phone;
+        readFormInputs();
+        performCalculations();
+      }
+    }
+
+    // RECORDS CRUD
+    function refreshRecordsList() {
+      const body = document.getElementById('records-list-body');
+      body.innerHTML = '';
+      db.records.slice().reverse().forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="fw-bold">${r.invoiceNo}</div></td>
+          <td>${r.tenantName}</td>
+          <td>${r.date}</td>
+          <td>
+            <div class="d-flex gap-1">
+              <button class="btn btn-sm btn-outline-primary" onclick="viewRecord('${r.id}')">View</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteRecord('${r.id}')">×</button>
+            </div>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function saveRecord() {
+      const form = document.getElementById('invoice-form');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const record = {
+        id: 'R' + Date.now(),
+        invoiceNo: state.invoiceNumber,
+        tenantName: state.tenantName,
+        room: state.roomNumber,
+        phone: state.phoneNumber,
+        monthlyCost: state.monthlyCost,
+        months: state.monthsPaid,
+        startDate: state.startDate,
+        amount: state.amountPaid,
+        total: state.calculatedTotalCost,
+        date: new Date().toISOString().slice(0,10),
+        status: state.paymentStatus
+      };
+
+      db.records.push(record);
+      saveDB();
+      showAlert("Saved", "Receipt record has been saved to history!");
+    }
+
+    function viewRecord(id) {
+      const r = db.records.find(x => x.id === id);
+      if (!r) return;
+      
+      elForm.tenantName.value = r.tenantName;
+      elForm.roomNumber.value = r.room;
+      elForm.phoneNumber.value = r.phone;
+      elForm.monthsPaid.value = r.months;
+      elForm.amountPaid.value = r.amount;
+      elForm.startDate.value = r.startDate;
+      elForm.invoiceNumber.value = r.invoiceNo;
+      
+      readFormInputs();
+      state.invoiceNumber = r.invoiceNo; // Override generated ID
+      performCalculations();
+      
+      switchView('generator');
+    }
+
+    function deleteRecord(id) {
+      showConfirm("Delete this payment record from history?", () => {
+        db.records = db.records.filter(x => x.id !== id);
+        saveDB();
+      });
+    }
+
+    // INVOICE LOGIC (Existing preserved)
     function generateInvoiceNumber(dateObj) {
       const yy = String(dateObj.getFullYear()).slice(-2);
       const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
       const dd = String(dateObj.getDate()).padStart(2, '0');
       const rand = Math.floor(1000 + Math.random() * 9000); 
       const id = `${yy}${mm}${dd}-${rand}`;
-      
       state.invoiceNumber = id;
       elForm.invoiceNumber.value = id;
     }
 
-    // READ VALUES FROM INPUTS INTO STATE
     function readFormInputs() {
       state.tenantName = (elForm.tenantName.value || 'N/A').toUpperCase();
       state.roomNumber = (elForm.roomNumber.value || 'N/A').toUpperCase();
       state.phoneNumber = (elForm.phoneNumber.value || 'N/A').toUpperCase();
-      state.monthlyCost = parseFloat(elForm.monthlyCost.value) || 0;
+      state.monthlyCost = parseFloat(elForm.monthlyCost.value) || 15000;
       state.monthsPaid = parseInt(elForm.monthsPaid.value, 10) || 0;
       state.amountPaid = parseFloat(elForm.amountPaid.value) || 0;
       state.startDate = elForm.startDate.value;
     }
 
-    // DISPATCH BINDINGS
     function bindFormEvents() {
       const inputs = [
         elForm.tenantName, elForm.roomNumber, elForm.phoneNumber,
         elForm.monthlyCost, elForm.monthsPaid, elForm.startDate, elForm.amountPaid
       ];
-      
       inputs.forEach(input => {
-        // Run updates instantly on input (typing, pasting), change (focus loss/date select), and keyup (key releases)
-        input.addEventListener('input', () => {
-          readFormInputs();
-          performCalculations();
-        });
-        
-        input.addEventListener('change', () => {
-          readFormInputs();
-          performCalculations();
-        });
-
-        input.addEventListener('keyup', () => {
-          readFormInputs();
-          performCalculations();
+        ['input', 'change', 'keyup'].forEach(ev => {
+          input.addEventListener(ev, () => { readFormInputs(); performCalculations(); });
         });
       });
-
-      // Toggle template print layer settings (applies instantly to screen view as well)
       elForm.toggleTemplatePrint.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          document.body.classList.remove('hide-stationery-template');
-        } else {
-          document.body.classList.add('hide-stationery-template');
-        }
+        document.body.classList.toggle('hide-stationery-template', !e.target.checked);
       });
     }
 
-    // BUSINESS LOGIC CALCULATION ENGINE
     function performCalculations() {
-      // 1. Calculate Expected End Date with strict format validation to avoid NaN outputs during manual typing
       if (state.startDate && state.monthsPaid > 0) {
         const parts = state.startDate.split('-');
-        if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
-          const y = parseInt(parts[0], 10);
-          const m = parseInt(parts[1], 10) - 1; 
-          const d = parseInt(parts[2], 10);
-          
-          if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
-            const end = new Date(y, m, d);
-            if (!isNaN(end.getTime())) {
-              end.setMonth(end.getMonth() + state.monthsPaid);
-              
-              const ey = end.getFullYear();
-              const em = String(end.getMonth() + 1).padStart(2, '0');
-              const ed = String(end.getDate()).padStart(2, '0');
-              state.expectedEndDate = `${ey}-${em}-${ed}`;
-            } else {
-              state.expectedEndDate = '';
-            }
-          } else {
-            state.expectedEndDate = '';
-          }
-        } else {
-          state.expectedEndDate = '';
+        if (parts.length === 3) {
+          const end = new Date(parts[0], parts[1]-1, parts[2]);
+          end.setMonth(end.getMonth() + state.monthsPaid);
+          state.expectedEndDate = `${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,'0')}-${String(end.getDate()).padStart(2,'0')}`;
         }
-      } else {
-        state.expectedEndDate = '';
       }
 
-      // 2. Rent & 1-Year/2-Year Discount Calculations
       const standardCost = state.monthsPaid * state.monthlyCost;
       let targetCost = standardCost;
       state.discountAmt = 0;
       state.discountApplied = false;
-      state.discountTextEn = '';
-      state.discountTextFr = '';
-      let discountBadgeText = '';
-
-      if (state.monthsPaid === 12) {
-        const discountTriggerCost = 10 * state.monthlyCost; 
-        if (state.amountPaid >= discountTriggerCost) {
-          targetCost = discountTriggerCost;
-          state.discountAmt = 2 * state.monthlyCost;
-          state.discountApplied = true;
-          state.discountTextEn = "1-YEAR UPFRONT RENT REMISE (2 MONTHS FREE)";
-          state.discountTextFr = "REMISE DE 1 AN (2 MOIS GRATUITS)";
-          discountBadgeText = `<strong>1-YEAR UPFRONT DISCOUNT APPLIED!</strong> TOTAL DUE REDUCED TO 10 MONTHS (${formatCurrencyEN(discountTriggerCost)}) INSTEAD OF ${formatCurrencyEN(standardCost)} (2 MONTHS FREE).`;
-        }
-      } else if (state.monthsPaid === 24) {
-        const discountTriggerCost = 20 * state.monthlyCost; 
-        if (state.amountPaid >= discountTriggerCost) {
-          targetCost = discountTriggerCost;
-          state.discountAmt = 4 * state.monthlyCost;
-          state.discountApplied = true;
-          state.discountTextEn = "2-YEAR UPFRONT RENT REMISE (4 MONTHS FREE)";
-          state.discountTextFr = "REMISE DE 2 ANS (4 MOIS GRATUITS)";
-          discountBadgeText = `<strong>2-YEAR UPFRONT DISCOUNT APPLIED!</strong> TOTAL DUE REDUCED TO 20 MONTHS (${formatCurrencyEN(discountTriggerCost)}) INSTEAD OF ${formatCurrencyEN(standardCost)} (4 MONTHS FREE).`;
-        }
+      
+      if (state.monthsPaid === 12 && state.amountPaid >= (10 * state.monthlyCost)) {
+        targetCost = 10 * state.monthlyCost;
+        state.discountAmt = 2 * state.monthlyCost;
+        state.discountApplied = true;
+        state.discountTextEn = "1-YEAR UPFRONT RENT REMISE (2 MONTHS FREE)";
+        state.discountTextFr = "REMISE DE 1 AN (2 MOIS GRATUITS)";
+      } else if (state.monthsPaid === 24 && state.amountPaid >= (20 * state.monthlyCost)) {
+        targetCost = 20 * state.monthlyCost;
+        state.discountAmt = 4 * state.monthlyCost;
+        state.discountApplied = true;
+        state.discountTextEn = "2-YEAR UPFRONT RENT REMISE (4 MONTHS FREE)";
+        state.discountTextFr = "REMISE DE 2 ANS (4 MOIS GRATUITS)";
       }
 
       state.calculatedTotalCost = targetCost;
-
-      // Update badge alert in form
-      if (state.discountApplied) {
-        elForm.discountBadge.innerHTML = `
-          <svg style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 8v4M12 16h.01"/>
-          </svg>
-          <div>${discountBadgeText}</div>
-        `;
-        elForm.discountBadge.style.display = 'flex';
-      } else {
-        elForm.discountBadge.style.display = 'none';
-      }
-
-      // 3. Payment Status & Balance
       state.balanceAmount = state.calculatedTotalCost - state.amountPaid;
-
-      if (state.amountPaid === state.calculatedTotalCost) {
-        state.paymentStatus = 'FULLY PAID';
-      } else if (state.amountPaid < state.calculatedTotalCost) {
-        state.paymentStatus = 'PARTIALLY PAID';
-      } else {
-        state.paymentStatus = 'OVERPAID';
+      state.paymentStatus = state.amountPaid >= state.calculatedTotalCost ? 'FULLY PAID' : 'PARTIALLY PAID';
+      
+      elForm.discountBadge.style.display = state.discountApplied ? 'flex' : 'none';
+      if (state.discountApplied) {
+        elForm.discountBadge.innerHTML = `<svg style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><strong>DISCOUNT APPLIED!</strong> ${state.discountTextEn}</div>`;
       }
-
-      // 4. Update UI Previews
       updateUI();
     }
 
-    // CURRENCY FORMATTERS
-    function formatCurrencyEN(value) {
-      return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(value) + ' XAF';
-    }
-
-    // Space-separated thousands separator for French standard
-    function formatCurrencyFR(value) {
-      return new Intl.NumberFormat('fr-FR', { style: 'decimal' }).format(value) + ' XAF';
-    }
-
-    // BILINGUAL DATES LOCALIZER
+    // FORMATTERS & LOCALIZERS
+    function formatCurrencyEN(v) { return new Intl.NumberFormat('en-US').format(v) + ' XAF'; }
+    function formatCurrencyFR(v) { return new Intl.NumberFormat('fr-FR').format(v) + ' XAF'; }
     const monthsEn = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
     const monthsFr = ["JANVIER", "FÉVRIER", "MARS", "AVRIL", "MAI", "JUIN", "JUILLET", "AOÛT", "SEPTEMBRE", "OCTOBRE", "NOVEMBRE", "DÉCEMBRE"];
-
-    function localizeDate(dateStr, lang) {
-      if (!dateStr || dateStr === 'NaN-NaN-NaN') return 'N/A';
-      const parts = dateStr.split('-');
-      if (parts.length < 3) return 'N/A';
-      const y = parts[0];
-      const mVal = parseInt(parts[1], 10);
-      const dVal = parseInt(parts[2], 10);
-      
-      if (isNaN(mVal) || mVal < 1 || mVal > 12 || isNaN(dVal) || isNaN(y)) {
-        return 'N/A';
-      }
-
-      const mIdx = mVal - 1;
-      if (lang === 'fr') {
-        return `${dVal} ${monthsFr[mIdx]} ${y}`;
-      } else {
-        return `${monthsEn[mIdx]} ${dVal}, ${y}`;
-      }
+    function localizeDate(s, l) {
+      if (!s) return 'N/A';
+      const p = s.split('-');
+      const mIdx = parseInt(p[1])-1;
+      return l === 'fr' ? `${p[2]} ${monthsFr[mIdx]} ${p[0]}` : `${monthsEn[mIdx]} ${p[2]}, ${p[0]}`;
     }
 
-    // UI RENDER LOOP
     function updateUI() {
-      // --- Page 1 (English) Previews ---
+      // EN
       document.getElementById('preview-invoice-no-en').innerText = state.invoiceNumber;
       document.getElementById('preview-tenant-en').innerText = state.tenantName;
       document.getElementById('preview-phone-en').innerText = state.phoneNumber;
@@ -1210,88 +1594,30 @@
       document.getElementById('preview-date-en').innerText = localizeDate(state.startDate, 'en');
       document.getElementById('preview-start-date-en').innerText = localizeDate(state.startDate, 'en');
       document.getElementById('preview-end-date-en').innerText = localizeDate(state.expectedEndDate, 'en');
-
-      // Populate Table Items Body (English)
-      const tbodyEn = document.getElementById('invoice-items-body-en');
-      tbodyEn.innerHTML = '';
-
-      // Standard Item Row
-      const trItemEn = document.createElement('tr');
-      const startFmtEn = localizeDate(state.startDate, 'en');
-      const endFmtEn = localizeDate(state.expectedEndDate, 'en');
-      trItemEn.innerHTML = `
-        <td>Rent Payment - Room ${state.roomNumber}<br><small style="color: #64748b;">Period: ${startFmtEn} to ${endFmtEn}</small></td>
-        <td style="text-align: right;">${formatCurrencyEN(state.monthlyCost)}</td>
-        <td style="text-align: center;">${state.monthsPaid}</td>
-        <td style="text-align: right;">${formatCurrencyEN(state.monthsPaid * state.monthlyCost)}</td>
-      `;
-      tbodyEn.appendChild(trItemEn);
-
-      // Discount Item Row if applied
-      const subtotalVal = state.monthsPaid * state.monthlyCost;
-      const discountRowEn = document.getElementById('preview-discount-row-en');
       
+      const tbodyEn = document.getElementById('invoice-items-body-en');
+      tbodyEn.innerHTML = `<tr><td>RENT - ROOM ${state.roomNumber}<br><small style="color:#64748b">PERIOD: ${localizeDate(state.startDate,'en')} - ${localizeDate(state.expectedEndDate,'en')}</small></td><td style="text-align:right">${formatCurrencyEN(state.monthlyCost)}</td><td style="text-align:center">${state.monthsPaid}</td><td style="text-align:right">${formatCurrencyEN(state.monthsPaid*state.monthlyCost)}</td></tr>`;
       if (state.discountApplied) {
-        discountRowEn.style.display = 'flex';
-        document.getElementById('preview-discount-en').innerText = '-' + formatCurrencyEN(state.discountAmt);
-        
-        const trDiscEn = document.createElement('tr');
-        trDiscEn.className = 'discount-row';
-        trDiscEn.innerHTML = `
-          <td>${state.discountTextEn}</td>
-          <td style="text-align: right;">-</td>
-          <td style="text-align: center;">-</td>
-          <td style="text-align: right;">-${formatCurrencyEN(state.discountAmt)}</td>
-        `;
-        tbodyEn.appendChild(trDiscEn);
-      } else {
-        discountRowEn.style.display = 'none';
+        tbodyEn.innerHTML += `<tr class="discount-row"><td>${state.discountTextEn}</td><td>-</td><td>-</td><td style="text-align:right">-${formatCurrencyEN(state.discountAmt)}</td></tr>`;
       }
-
-      // Add Final Total Row to Table
-      const trTotalEn = document.createElement('tr');
-      trTotalEn.className = 'total-row';
-      trTotalEn.innerHTML = `
-        <td colspan="3">Total Amount Due</td>
-        <td style="text-align: right;">${formatCurrencyEN(state.calculatedTotalCost)}</td>
-      `;
-      tbodyEn.appendChild(trTotalEn);
-
-      // Summary Card Previews
-      document.getElementById('preview-subtotal-en').innerText = formatCurrencyEN(subtotalVal);
+      tbodyEn.innerHTML += `<tr class="total-row"><td colspan="3">TOTAL DUE</td><td style="text-align:right">${formatCurrencyEN(state.calculatedTotalCost)}</td></tr>`;
+      
+      document.getElementById('preview-subtotal-en').innerText = formatCurrencyEN(state.monthsPaid * state.monthlyCost);
       document.getElementById('preview-total-cost-en').innerText = formatCurrencyEN(state.calculatedTotalCost);
       document.getElementById('preview-amount-paid-en').innerText = formatCurrencyEN(state.amountPaid);
-
-      // Balance block styling
+      
+      const balRowEn = document.getElementById('preview-balance-row-en');
       const balValEn = document.getElementById('preview-balance-val-en');
       const balLabelEn = document.getElementById('preview-balance-label-en');
-      const balRowEn = document.getElementById('preview-balance-row-en');
-      const statusBadgeEn = document.getElementById('preview-status-en');
+      const statusEn = document.getElementById('preview-status-en');
+      
+      balRowEn.className = 'summary-row balance ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+      statusEn.className = 'status-badge ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+      balLabelEn.innerText = state.balanceAmount <= 0 ? 'CREDIT:' : 'BALANCE DUE:';
+      balValEn.innerText = formatCurrencyEN(Math.abs(state.balanceAmount));
+      statusEn.innerText = state.paymentStatus;
 
-      balRowEn.className = 'summary-row balance';
-      statusBadgeEn.className = 'status-badge';
-
-      if (state.paymentStatus === 'Fully Paid') {
-        balLabelEn.innerText = 'Balance Due:';
-        balValEn.innerText = formatCurrencyEN(0);
-        balRowEn.classList.add('paid');
-        statusBadgeEn.classList.add('paid');
-        statusBadgeEn.innerText = 'Fully Paid';
-      } else if (state.paymentStatus === 'Partially Paid') {
-        balLabelEn.innerText = 'Balance Due:';
-        balValEn.innerText = formatCurrencyEN(state.balanceAmount);
-        balRowEn.classList.add('partial');
-        statusBadgeEn.classList.add('partial');
-        statusBadgeEn.innerText = `Balance: ${formatCurrencyEN(state.balanceAmount)}`;
-      } else {
-        balLabelEn.innerText = 'Overpaid / Credit:';
-        balValEn.innerText = formatCurrencyEN(Math.abs(state.balanceAmount));
-        balRowEn.classList.add('overpaid');
-        statusBadgeEn.classList.add('overpaid');
-        statusBadgeEn.innerText = 'Overpaid';
-      }
-
-      // --- Page 2 (French) Previews ---
+      // FR
       document.getElementById('preview-invoice-no-fr').innerText = state.invoiceNumber;
       document.getElementById('preview-tenant-fr').innerText = state.tenantName;
       document.getElementById('preview-phone-fr').innerText = state.phoneNumber;
@@ -1299,237 +1625,157 @@
       document.getElementById('preview-date-fr').innerText = localizeDate(state.startDate, 'fr');
       document.getElementById('preview-start-date-fr').innerText = localizeDate(state.startDate, 'fr');
       document.getElementById('preview-end-date-fr').innerText = localizeDate(state.expectedEndDate, 'fr');
-
-      // Populate Table Items Body (French)
-      const tbodyFr = document.getElementById('invoice-items-body-fr');
-      tbodyFr.innerHTML = '';
-
-      // Standard Item Row (French)
-      const trItemFr = document.createElement('tr');
-      const startFmtFr = localizeDate(state.startDate, 'fr');
-      const endFmtFr = localizeDate(state.expectedEndDate, 'fr');
-      trItemFr.innerHTML = `
-        <td>Paiement Loyer - Chambre ${state.roomNumber}<br><small style="color: #64748b;">Période: du ${startFmtFr} au ${endFmtFr}</small></td>
-        <td style="text-align: right;">${formatCurrencyFR(state.monthlyCost)}</td>
-        <td style="text-align: center;">${state.monthsPaid}</td>
-        <td style="text-align: right;">${formatCurrencyFR(state.monthsPaid * state.monthlyCost)}</td>
-      `;
-      tbodyFr.appendChild(trItemFr);
-
-      // Discount Item Row if applied (French)
-      const discountRowFr = document.getElementById('preview-discount-row-fr');
       
+      const tbodyFr = document.getElementById('invoice-items-body-fr');
+      tbodyFr.innerHTML = `<tr><td>LOYER - CHAMBRE ${state.roomNumber}<br><small style="color:#64748b">PÉRIODE: ${localizeDate(state.startDate,'fr')} - ${localizeDate(state.expectedEndDate,'fr')}</small></td><td style="text-align:right">${formatCurrencyFR(state.monthlyCost)}</td><td style="text-align:center">${state.monthsPaid}</td><td style="text-align:right">${formatCurrencyFR(state.monthsPaid*state.monthlyCost)}</td></tr>`;
       if (state.discountApplied) {
-        discountRowFr.style.display = 'flex';
-        document.getElementById('preview-discount-fr').innerText = '-' + formatCurrencyFR(state.discountAmt);
-        
-        const trDiscFr = document.createElement('tr');
-        trDiscFr.className = 'discount-row';
-        trDiscFr.innerHTML = `
-          <td>${state.discountTextFr}</td>
-          <td style="text-align: right;">-</td>
-          <td style="text-align: center;">-</td>
-          <td style="text-align: right;">-${formatCurrencyFR(state.discountAmt)}</td>
-        `;
-        tbodyFr.appendChild(trDiscFr);
-      } else {
-        discountRowFr.style.display = 'none';
+        tbodyFr.innerHTML += `<tr class="discount-row"><td>${state.discountTextFr}</td><td>-</td><td>-</td><td style="text-align:right">-${formatCurrencyFR(state.discountAmt)}</td></tr>`;
       }
-
-      // Add Final Total Row to Table (French)
-      const trTotalFr = document.createElement('tr');
-      trTotalFr.className = 'total-row';
-      trTotalFr.innerHTML = `
-        <td colspan="3">Montant Total Dû</td>
-        <td style="text-align: right;">${formatCurrencyFR(state.calculatedTotalCost)}</td>
-      `;
-      tbodyFr.appendChild(trTotalFr);
-
-      // Summary Card Previews (French)
-      document.getElementById('preview-subtotal-fr').innerText = formatCurrencyFR(subtotalVal);
+      tbodyFr.innerHTML += `<tr class="total-row"><td colspan="3">MONTANT TOTAL DÛ</td><td style="text-align:right">${formatCurrencyFR(state.calculatedTotalCost)}</td></tr>`;
+      
+      document.getElementById('preview-subtotal-fr').innerText = formatCurrencyFR(state.monthsPaid * state.monthlyCost);
       document.getElementById('preview-total-cost-fr').innerText = formatCurrencyFR(state.calculatedTotalCost);
       document.getElementById('preview-amount-paid-fr').innerText = formatCurrencyFR(state.amountPaid);
-
-      // Balance block styling (French)
+      
+      const balRowFr = document.getElementById('preview-balance-row-fr');
       const balValFr = document.getElementById('preview-balance-val-fr');
       const balLabelFr = document.getElementById('preview-balance-label-fr');
-      const balRowFr = document.getElementById('preview-balance-row-fr');
-      const statusBadgeFr = document.getElementById('preview-status-fr');
+      const statusFr = document.getElementById('preview-status-fr');
+      
+      balRowFr.className = 'summary-row balance ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+      statusFr.className = 'status-badge ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+      balLabelFr.innerText = state.balanceAmount <= 0 ? 'CRÉDIT:' : 'RESTE À PAYER:';
+      balValFr.innerText = formatCurrencyFR(Math.abs(state.balanceAmount));
+      statusFr.innerText = state.paymentStatus === 'FULLY PAID' ? 'ENTIÈREMENT PAYÉ' : 'PARTIELLEMENT PAYÉ';
 
-      balRowFr.className = 'summary-row balance';
-      statusBadgeFr.className = 'status-badge';
-
-      if (state.paymentStatus === 'Fully Paid') {
-        balLabelFr.innerText = 'Reste à Payer:';
-        balValFr.innerText = formatCurrencyFR(0);
-        balRowFr.classList.add('paid');
-        statusBadgeFr.classList.add('paid');
-        statusBadgeFr.innerText = 'Entièrement Payé';
-      } else if (state.paymentStatus === 'Partially Paid') {
-        balLabelFr.innerText = 'Reste à Payer:';
-        balValFr.innerText = formatCurrencyFR(state.balanceAmount);
-        balRowFr.classList.add('partial');
-        statusBadgeFr.classList.add('partial');
-        statusBadgeFr.innerText = `Solde dû: ${formatCurrencyFR(state.balanceAmount)}`;
-      } else {
-        balLabelFr.innerText = 'Trop-perçu:';
-        balValFr.innerText = formatCurrencyFR(Math.abs(state.balanceAmount));
-        balRowFr.classList.add('overpaid');
-        statusBadgeFr.classList.add('overpaid');
-        statusBadgeFr.innerText = 'Trop-perçu';
-      }
-
-      // Re-generate QR Codes (Debounced for zero-lag keyboard typing)
       queueQRGeneration();
     }
 
-    // DEBOUNCED QR GENERATOR
     let qrDebounceTimeout = null;
     function queueQRGeneration() {
-      if (qrDebounceTimeout) {
-        clearTimeout(qrDebounceTimeout);
-      }
-      qrDebounceTimeout = setTimeout(() => {
-        generateQRCodes();
-      }, 150);
+      if (qrDebounceTimeout) clearTimeout(qrDebounceTimeout);
+      qrDebounceTimeout = setTimeout(() => generateQRCodes(), 150);
     }
 
-    // QR CODE GENERATION ENGINE
     function generateQRCodes() {
-      // Formatted QR content with key receipt details
-      const qrString = [
-        `LE SANCTUAIRE DES INTELLOS - DIGITAL RECEIPT`,
-        `Receipt #: ${state.invoiceNumber}`,
-        `Tenant: ${state.tenantName}`,
-        `Amount Paid: ${formatCurrencyEN(state.amountPaid)}`,
-        `Date of Issue: ${localizeDate(state.startDate, 'en')}`
-      ].join('\n');
-
-      // English Page QR code
-      const qrDivEn = document.getElementById('qrcode-en');
-      qrDivEn.innerHTML = '';
+      const qrEn = `LE SANCTUAIRE DES INTELLOS - RECEIPT\nNo: ${state.invoiceNumber}\nTenant: ${state.tenantName}\nPaid: ${formatCurrencyEN(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'en')}`;
+      const qrFr = `LE SANCTUAIRE DES INTELLOS - REÇU\nNo: ${state.invoiceNumber}\nLocataire: ${state.tenantName}\nPayé: ${formatCurrencyFR(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'fr')}`;
+      
+      const dEn = document.getElementById('qrcode-en');
+      const dFr = document.getElementById('qrcode-fr');
+      dEn.innerHTML = ''; dFr.innerHTML = '';
       if (typeof QRCode !== 'undefined') {
-        new QRCode(qrDivEn, {
-          text: qrString,
-          width: 160,
-          height: 160,
-          colorDark: '#0b1b33',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      } else {
-        qrDivEn.innerText = "[QR Code]";
-      }
-
-      // French Page QR code
-      const qrDivFr = document.getElementById('qrcode-fr');
-      qrDivFr.innerHTML = '';
-      // We'll use the same detailed string for the French side as well for verification consistency
-      const qrStringFr = [
-        `LE SANCTUAIRE DES INTELLOS - REÇU NUMÉRIQUE`,
-        `N° de Reçu: ${state.invoiceNumber}`,
-        `Locataire: ${state.tenantName}`,
-        `Montant Payé: ${formatCurrencyFR(state.amountPaid)}`,
-        `Date d'Émission: ${localizeDate(state.startDate, 'fr')}`
-      ].join('\n');
-
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrDivFr, {
-          text: qrStringFr,
-          width: 160,
-          height: 160,
-          colorDark: '#0b1b33',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      } else {
-        qrDivFr.innerText = "[Code QR]";
+        new QRCode(dEn, { text: qrEn, width: 160, height: 160, colorDark: '#0b1b33' });
+        new QRCode(dFr, { text: qrFr, width: 160, height: 160, colorDark: '#0b1b33' });
       }
     }
 
-    // PDF DOWNLOAD ENGINE
     function downloadPDF() {
       const form = document.getElementById('invoice-form');
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-
+      if (!form.checkValidity()) { form.reportValidity(); return; }
       const element = document.querySelector('.scale-container');
       const wrapper = document.querySelector('.scale-wrapper');
-      
-      // Capture current scale to restore later
       const currentScale = getComputedStyle(wrapper).getPropertyValue('--preview-scale');
-      
-      // Set scale to 1 for clean PDF capture
       wrapper.style.setProperty('--preview-scale', '1');
       wrapper.style.height = 'auto';
-
-      const opt = {
-        margin: 0,
-        filename: `Sanctuaire_Invoice_${state.invoiceNumber}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-          scale: 2, 
-          useCORS: true, 
-          letterRendering: true,
-          scrollY: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      
+      const opt = { margin:0, filename:`Sanctuaire_${state.invoiceNumber}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} };
       html2pdf().set(opt).from(element).save().then(() => {
-        // Restore scaling after download
         wrapper.style.setProperty('--preview-scale', currentScale);
         handleScaling();
       });
     }
 
-    // PREVIEW ZOOM SCALING ENGINE
     function handleScaling() {
-      const previewPanel = document.querySelector('.preview-panel');
-      const scaleWrapper = document.querySelector('.scale-wrapper');
-      if (!previewPanel || !scaleWrapper) return;
-      
-      const panelWidth = previewPanel.clientWidth - 40; 
-      // Convert 210mm to pixels for the calculation (assuming roughly 96 DPI but browser handles it)
-      const pageMinWidth = 210 * 3.7795275591; 
-      
-      const scale = Math.min(panelWidth / pageMinWidth, 1);
-      
-      scaleWrapper.style.setProperty('--preview-scale', scale);
-      
-      const baseHeightMm = (297 * 2) + 10; // height of 2 A4 pages + gap in mm
-      const baseHeightPx = baseHeightMm * 3.7795275591;
-      scaleWrapper.style.height = `${baseHeightPx * scale}px`;
+      const p = document.querySelector('.preview-panel');
+      const w = document.querySelector('.scale-wrapper');
+      if (!p || !w) return;
+      const scale = Math.min((p.clientWidth - 40) / (210 * 3.78), 1);
+      w.style.setProperty('--preview-scale', scale);
+      w.style.height = `${((297 * 2) + 10) * 3.78 * scale}px`;
     }
 
-    // PRINT TRIGGER
     function printInvoice() {
-      const form = document.getElementById('invoice-form');
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
+      if (!document.getElementById('invoice-form').checkValidity()) { document.getElementById('invoice-form').reportValidity(); return; }
       window.print();
     }
 
-    // RESET TRIGGER
     function resetForm() {
-      elForm.tenantName.value = '';
-      elForm.roomNumber.value = '';
-      elForm.phoneNumber.value = '';
-      elForm.monthlyCost.value = '15000';
-      elForm.monthsPaid.value = '12';
-      elForm.amountPaid.value = '';
-      elForm.startDate.value = '';
-
-      const today = new Date();
-      generateInvoiceNumber(today);
+      elForm.tenantName.value = ''; elForm.roomNumber.value = ''; elForm.phoneNumber.value = '';
+      elForm.monthlyCost.value = '15000'; elForm.monthsPaid.value = '12'; elForm.amountPaid.value = ''; elForm.startDate.value = '';
+      generateInvoiceNumber(new Date());
       readFormInputs();
       performCalculations();
     }
   </script>
+  <!-- TENANT MODAL -->
+  <div class="modal fade" id="tenantModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-navy text-white">
+          <h5 class="modal-title h6 fw-bold text-uppercase mb-0" id="tenantModalTitle">Add Tenant</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="tenant-crud-form">
+            <input type="hidden" id="crud-tenant-id">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted text-uppercase">Full Name</label>
+              <input type="text" id="crud-tenant-name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted text-uppercase">Room Number</label>
+              <input type="text" id="crud-tenant-room" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted text-uppercase">Phone Number</label>
+              <input type="tel" id="crud-tenant-phone" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-navy w-100 py-2 fw-bold text-uppercase small">Save Tenant</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGE MODAL (Custom Alert) -->
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-body text-center py-4">
+          <div id="messageModalIcon" class="mb-3">
+            <svg class="text-success" style="width: 48px; height: 48px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h6 class="fw-bold text-navy mb-2 text-uppercase" id="messageModalTitle">Success</h6>
+          <p class="small text-muted mb-4" id="messageModalText">Operation completed successfully.</p>
+          <button type="button" class="btn btn-navy btn-sm w-100 fw-bold" data-bs-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL (Custom Confirm) -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-body text-center py-4">
+          <div class="mb-3 text-warning">
+            <svg style="width: 48px; height: 48px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          <h6 class="fw-bold text-navy mb-2 text-uppercase">Are you sure?</h6>
+          <p class="small text-muted mb-4" id="confirmModalText">This action cannot be undone.</p>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm flex-grow-1 fw-bold" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" id="confirmModalBtn" class="btn btn-danger btn-sm flex-grow-1 fw-bold">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
