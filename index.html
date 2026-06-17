@@ -1502,6 +1502,13 @@
         return;
       }
 
+      // Check for duplicate invoice number
+      const isDuplicate = db.records.some(r => r.invoiceNo === state.invoiceNumber);
+      if (isDuplicate) {
+        showAlert("Duplicate Found", "A record with this receipt number (" + state.invoiceNumber + ") already exists.", "error");
+        return;
+      }
+
       const record = {
         id: 'R' + Date.now(),
         invoiceNo: state.invoiceNumber,
@@ -1739,13 +1746,9 @@
     }
 
     function generateQRCodes() {
-      // UTF-8 Helper for QRCode.js to support accents like 'É', 'ç'
-      const encodeUTF8 = (str) => {
-        return unescape(encodeURIComponent(str));
-      };
-
-      const qrEn = encodeUTF8(`LE SANCTUAIRE DES INTELLOS - RECEIPT\nNo: ${state.invoiceNumber}\nTenant: ${state.tenantName}\nPaid: ${formatCurrencyEN(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'en')}`);
-      const qrFr = encodeUTF8(`LE SANCTUAIRE DES INTELLOS - REÇU\nNo: ${state.invoiceNumber}\nLocataire: ${state.tenantName}\nPayé: ${formatCurrencyFR(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'fr')}`);
+      // Concisely build strings to stay within QR limits
+      const qrEn = `SANCTUAIRE INTELLOS\nNo: ${state.invoiceNumber}\nTenant: ${state.tenantName}\nPaid: ${formatCurrencyEN(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'en')}`;
+      const qrFr = `SANCTUAIRE INTELLOS\nNo: ${state.invoiceNumber}\nLocataire: ${state.tenantName}\nPaye: ${formatCurrencyFR(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'fr')}`;
       
       const dEn = document.getElementById('qrcode-en');
       const dFr = document.getElementById('qrcode-fr');
@@ -1756,22 +1759,29 @@
       
       if (typeof QRCode !== 'undefined') {
         try {
-          new QRCode(dEn, { 
-            text: qrEn, 
-            width: 160, 
-            height: 160, 
+          const config = { 
+            width: 256, // Higher internal resolution for more data
+            height: 256, 
             colorDark: '#0b1b33',
-            correctLevel: QRCode.CorrectLevel.M 
-          });
-          new QRCode(dFr, { 
-            text: qrFr, 
-            width: 160, 
-            height: 160, 
-            colorDark: '#0b1b33',
-            correctLevel: QRCode.CorrectLevel.M
+            correctLevel: QRCode.CorrectLevel.L
+          };
+
+          if (state.selectedLanguage === 'en') {
+            new QRCode(dEn, { ...config, text: qrEn });
+          } else {
+            new QRCode(dFr, { ...config, text: qrFr });
+          }
+
+          // Ensure images fit their 160px container
+          const imgs = document.querySelectorAll('.qrcode-wrapper img');
+          imgs.forEach(img => {
+            img.style.width = '160px';
+            img.style.height = '160px';
           });
         } catch (err) {
           console.error("QR Generation error:", err);
+          const errDiv = state.selectedLanguage === 'en' ? dEn : dFr;
+          errDiv.innerHTML = '<small class="text-danger" style="font-size:8px;">DATA OVERFLOW</small>';
         }
       }
     }
