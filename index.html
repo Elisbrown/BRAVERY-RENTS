@@ -39,6 +39,10 @@
       --bg-workspace: #f8fafc;
       --font-ui: 'Inter', sans-serif;
       --font-serif: 'Playfair Display', serif;
+      
+      /* Dynamic Paper Size */
+      --page-width: 210mm;
+      --page-height: 297mm;
     }
 
     /* Bootstrap Overrides */
@@ -185,7 +189,7 @@
 
     /* ZOOM/SCALE CONTAINER */
     .scale-wrapper {
-      width: 210mm;
+      width: var(--page-width);
       transform-origin: top center;
       transition: height 0.15s ease-out;
     }
@@ -195,21 +199,23 @@
       display: flex;
       flex-direction: column;
       gap: 30px;
-      width: 210mm;
+      width: var(--page-width);
     }
 
-    /* A4 PAGE CONTAINER */
+    /* PAGE CONTAINER */
     .a4-page {
-      width: 210mm;
-      height: 297mm;
+      width: var(--page-width);
+      height: var(--page-height);
       background-color: #ffffff;
       position: relative;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 5px 15px rgba(0, 0, 0, 0.08);
       overflow: hidden;
       box-sizing: border-box;
       flex-shrink: 0;
-      page-break-after: always;
-      break-after: page;
+      display: none; /* Hidden by default */
+    }
+    .a4-page.active {
+      display: block;
     }
 
     /* STATIONERY TEMPLATE OVERLAY: Uses template.png directly */
@@ -535,7 +541,7 @@
     /* PRINT LAYOUT OVERRIDES */
     @media print {
       @page {
-        size: A4 portrait;
+        size: auto; /* Uses browser/user preference, but container is locked */
         margin: 0;
       }
       * {
@@ -553,8 +559,8 @@
         height: auto !important;
         width: auto !important;
       }
-      .input-panel {
-        display: none !important; /* Hide input workspace in print */
+      .app-sidebar, .input-panel {
+        display: none !important; 
       }
       .preview-panel {
         display: block !important;
@@ -565,27 +571,30 @@
       }
       .scale-wrapper {
         transform: none !important;
-        width: 210mm !important;
+        width: var(--page-width) !important;
         height: auto !important;
       }
       .scale-container {
         transform: none !important;
         display: block !important;
         gap: 0 !important;
-        width: 210mm !important;
+        width: var(--page-width) !important;
         margin: 0 !important;
         padding: 0 !important;
       }
       .a4-page {
-        width: 210mm !important;
-        height: 297mm !important;
+        display: none !important;
+      }
+      .a4-page.active {
+        display: block !important;
+        width: var(--page-width) !important;
+        height: var(--page-height) !important;
         box-shadow: none !important;
         margin: 0 !important;
         border: none !important;
-        page-break-after: always !important;
-        break-after: page !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
         position: relative !important;
-        display: block !important;
         overflow: hidden !important;
       }
       .a4-page:last-child {
@@ -748,15 +757,49 @@
             </div>
           </div>
           
-          <!-- Print Preferences -->
-          <div class="card mb-4 shadow-sm border-0">
-            <div class="card-body py-3">
-              <div class="form-check form-switch d-flex align-items-center justify-content-between p-0">
+          <!-- System Preferences -->
+          <div class="card mb-3 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+              <h3 class="card-title h6 mb-0 fw-bold text-navy text-uppercase d-flex align-items-center gap-2">
+                <svg style="width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24">
+                  <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                System Preferences
+              </h3>
+            </div>
+            <div class="card-body pt-0">
+              <div class="row g-3 mb-3">
+                <div class="col-6">
+                  <label for="selectedLanguage" class="form-label small fw-bold text-muted text-uppercase" style="font-size: 10px;">Language</label>
+                  <select id="selectedLanguage" class="form-select form-select-sm">
+                    <option value="en" selected>ENGLISH</option>
+                    <option value="fr">FRANÇAIS</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label for="selectedPaperSize" class="form-label small fw-bold text-muted text-uppercase" style="font-size: 10px;">Paper Size</label>
+                  <select id="selectedPaperSize" class="form-select form-select-sm">
+                    <option value="a4" selected>A4 (210x297)</option>
+                    <option value="letter">LETTER (US)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-3">
                 <label class="form-check-label small fw-bold text-navy mb-0" for="toggleTemplatePrint">
-                  Print Background Stationery
-                  <span class="d-block text-muted fw-normal" style="font-size: 10px;">Includes letterhead & watermark</span>
+                  Background Template
+                  <span class="d-block text-muted fw-normal" style="font-size: 10px;">Show letterhead & watermark</span>
                 </label>
                 <input class="form-check-input ms-0" type="checkbox" id="toggleTemplatePrint" checked style="width: 2.5rem; height: 1.25rem; cursor: pointer;">
+              </div>
+
+              <div class="form-check form-switch d-flex align-items-center justify-content-between p-0">
+                <label class="form-check-label small fw-bold text-navy mb-0" for="toggleYearlyDiscount">
+                  Yearly Reward (30,000 XAF)
+                  <span class="d-block text-muted fw-normal" style="font-size: 10px;">Manually apply bonus remise</span>
+                </label>
+                <input class="form-check-input ms-0" type="checkbox" id="toggleYearlyDiscount" checked style="width: 2.5rem; height: 1.25rem; cursor: pointer;">
               </div>
             </div>
           </div>
@@ -1173,7 +1216,9 @@
       discountTextFr: '',
       calculatedTotalCost: 0,
       paymentStatus: 'AWAITING DATA',
-      balanceAmount: 0
+      balanceAmount: 0,
+      selectedLanguage: 'en',
+      selectedPaperSize: 'a4'
     };
 
     const elForm = {
@@ -1187,7 +1232,10 @@
       invoiceNumber: document.getElementById('invoiceNumber'),
       discountBadge: document.getElementById('discount-badge'),
       toggleTemplatePrint: document.getElementById('toggleTemplatePrint'),
-      tenantSelect: document.getElementById('tenantSelect')
+      toggleYearlyDiscount: document.getElementById('toggleYearlyDiscount'),
+      tenantSelect: document.getElementById('tenantSelect'),
+      selectedLanguage: document.getElementById('selectedLanguage'),
+      selectedPaperSize: document.getElementById('selectedPaperSize')
     };
 
     // INITIALIZATION
@@ -1519,12 +1567,15 @@
       state.monthsPaid = parseInt(elForm.monthsPaid.value, 10) || 0;
       state.amountPaid = parseFloat(elForm.amountPaid.value) || 0;
       state.startDate = elForm.startDate.value;
+      state.selectedLanguage = elForm.selectedLanguage.value;
+      state.selectedPaperSize = elForm.selectedPaperSize.value;
     }
 
     function bindFormEvents() {
       const inputs = [
         elForm.tenantName, elForm.roomNumber, elForm.phoneNumber,
-        elForm.monthlyCost, elForm.monthsPaid, elForm.startDate, elForm.amountPaid
+        elForm.monthlyCost, elForm.monthsPaid, elForm.startDate, elForm.amountPaid,
+        elForm.selectedLanguage, elForm.selectedPaperSize
       ];
       inputs.forEach(input => {
         ['input', 'change', 'keyup'].forEach(ev => {
@@ -1533,6 +1584,9 @@
       });
       elForm.toggleTemplatePrint.addEventListener('change', (e) => {
         document.body.classList.toggle('hide-stationery-template', !e.target.checked);
+      });
+      elForm.toggleYearlyDiscount.addEventListener('change', () => {
+        performCalculations();
       });
     }
 
@@ -1551,18 +1605,22 @@
       state.discountAmt = 0;
       state.discountApplied = false;
       
-      if (state.monthsPaid === 12 && state.amountPaid >= (10 * state.monthlyCost)) {
-        targetCost = 10 * state.monthlyCost;
-        state.discountAmt = 2 * state.monthlyCost;
-        state.discountApplied = true;
-        state.discountTextEn = "1-YEAR UPFRONT RENT REMISE (2 MONTHS FREE)";
-        state.discountTextFr = "REMISE DE 1 AN (2 MOIS GRATUITS)";
-      } else if (state.monthsPaid === 24 && state.amountPaid >= (20 * state.monthlyCost)) {
-        targetCost = 20 * state.monthlyCost;
-        state.discountAmt = 4 * state.monthlyCost;
-        state.discountApplied = true;
-        state.discountTextEn = "2-YEAR UPFRONT RENT REMISE (4 MONTHS FREE)";
-        state.discountTextFr = "REMISE DE 2 ANS (4 MOIS GRATUITS)";
+      const discountEnabled = elForm.toggleYearlyDiscount.checked;
+
+      // Manual Reward: works regardless of amount paid
+      if (discountEnabled) {
+        if (state.monthsPaid >= 12 && state.monthsPaid < 24) {
+          state.discountAmt = 2 * state.monthlyCost;
+          state.discountApplied = true;
+          state.discountTextEn = "1-YEAR UPFRONT RENT REMISE (2 MONTHS FREE)";
+          state.discountTextFr = "REMISE DE 1 AN (2 MOIS GRATUITS)";
+        } else if (state.monthsPaid >= 24) {
+          state.discountAmt = 4 * state.monthlyCost;
+          state.discountApplied = true;
+          state.discountTextEn = "2-YEAR UPFRONT RENT REMISE (4 MONTHS FREE)";
+          state.discountTextFr = "REMISE DE 2 ANS (4 MOIS GRATUITS)";
+        }
+        targetCost = standardCost - state.discountAmt;
       }
 
       state.calculatedTotalCost = targetCost;
@@ -1571,7 +1629,7 @@
       
       elForm.discountBadge.style.display = state.discountApplied ? 'flex' : 'none';
       if (state.discountApplied) {
-        elForm.discountBadge.innerHTML = `<svg style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><strong>DISCOUNT APPLIED!</strong> ${state.discountTextEn}</div>`;
+        elForm.discountBadge.innerHTML = `<svg style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><strong>BONUS APPLIED!</strong> ${state.discountTextEn}</div>`;
       }
       updateUI();
     }
@@ -1589,68 +1647,88 @@
     }
 
     function updateUI() {
-      // EN
-      document.getElementById('preview-invoice-no-en').innerText = state.invoiceNumber;
-      document.getElementById('preview-tenant-en').innerText = state.tenantName;
-      document.getElementById('preview-phone-en').innerText = state.phoneNumber;
-      document.getElementById('preview-room-en').innerText = state.roomNumber;
-      document.getElementById('preview-date-en').innerText = localizeDate(state.startDate, 'en');
-      document.getElementById('preview-start-date-en').innerText = localizeDate(state.startDate, 'en');
-      document.getElementById('preview-end-date-en').innerText = localizeDate(state.expectedEndDate, 'en');
-      
-      const tbodyEn = document.getElementById('invoice-items-body-en');
-      tbodyEn.innerHTML = `<tr><td>RENT - ROOM ${state.roomNumber}<br><small style="color:#64748b">PERIOD: ${localizeDate(state.startDate,'en')} - ${localizeDate(state.expectedEndDate,'en')}</small></td><td style="text-align:right">${formatCurrencyEN(state.monthlyCost)}</td><td style="text-align:center">${state.monthsPaid}</td><td style="text-align:right">${formatCurrencyEN(state.monthsPaid*state.monthlyCost)}</td></tr>`;
-      if (state.discountApplied) {
-        tbodyEn.innerHTML += `<tr class="discount-row"><td>${state.discountTextEn}</td><td>-</td><td>-</td><td style="text-align:right">-${formatCurrencyEN(state.discountAmt)}</td></tr>`;
+      // Apply Paper Size Dimensions
+      const root = document.documentElement;
+      if (state.selectedPaperSize === 'letter') {
+        root.style.setProperty('--page-width', '215.9mm');
+        root.style.setProperty('--page-height', '279.4mm');
+      } else {
+        root.style.setProperty('--page-width', '210mm');
+        root.style.setProperty('--page-height', '297mm');
       }
-      tbodyEn.innerHTML += `<tr class="total-row"><td colspan="3">TOTAL DUE</td><td style="text-align:right">${formatCurrencyEN(state.calculatedTotalCost)}</td></tr>`;
-      
-      document.getElementById('preview-subtotal-en').innerText = formatCurrencyEN(state.monthsPaid * state.monthlyCost);
-      document.getElementById('preview-total-cost-en').innerText = formatCurrencyEN(state.calculatedTotalCost);
-      document.getElementById('preview-amount-paid-en').innerText = formatCurrencyEN(state.amountPaid);
-      
-      const balRowEn = document.getElementById('preview-balance-row-en');
-      const balValEn = document.getElementById('preview-balance-val-en');
-      const balLabelEn = document.getElementById('preview-balance-label-en');
-      const statusEn = document.getElementById('preview-status-en');
-      
-      balRowEn.className = 'summary-row balance ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
-      statusEn.className = 'status-badge ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
-      balLabelEn.innerText = state.balanceAmount <= 0 ? 'CREDIT:' : 'BALANCE DUE:';
-      balValEn.innerText = formatCurrencyEN(Math.abs(state.balanceAmount));
-      statusEn.innerText = state.paymentStatus;
 
-      // FR
-      document.getElementById('preview-invoice-no-fr').innerText = state.invoiceNumber;
-      document.getElementById('preview-tenant-fr').innerText = state.tenantName;
-      document.getElementById('preview-phone-fr').innerText = state.phoneNumber;
-      document.getElementById('preview-room-fr').innerText = state.roomNumber;
-      document.getElementById('preview-date-fr').innerText = localizeDate(state.startDate, 'fr');
-      document.getElementById('preview-start-date-fr').innerText = localizeDate(state.startDate, 'fr');
-      document.getElementById('preview-end-date-fr').innerText = localizeDate(state.expectedEndDate, 'fr');
+      // Handle Page Visibility
+      const pgEn = document.getElementById('page-en');
+      const pgFr = document.getElementById('page-fr');
       
-      const tbodyFr = document.getElementById('invoice-items-body-fr');
-      tbodyFr.innerHTML = `<tr><td>LOYER - CHAMBRE ${state.roomNumber}<br><small style="color:#64748b">PÉRIODE: ${localizeDate(state.startDate,'fr')} - ${localizeDate(state.expectedEndDate,'fr')}</small></td><td style="text-align:right">${formatCurrencyFR(state.monthlyCost)}</td><td style="text-align:center">${state.monthsPaid}</td><td style="text-align:right">${formatCurrencyFR(state.monthsPaid*state.monthlyCost)}</td></tr>`;
-      if (state.discountApplied) {
-        tbodyFr.innerHTML += `<tr class="discount-row"><td>${state.discountTextFr}</td><td>-</td><td>-</td><td style="text-align:right">-${formatCurrencyFR(state.discountAmt)}</td></tr>`;
+      pgEn.classList.toggle('active', state.selectedLanguage === 'en');
+      pgFr.classList.toggle('active', state.selectedLanguage === 'fr');
+
+      if (state.selectedLanguage === 'en') {
+        // EN
+        document.getElementById('preview-invoice-no-en').innerText = state.invoiceNumber;
+        document.getElementById('preview-tenant-en').innerText = state.tenantName;
+        document.getElementById('preview-phone-en').innerText = state.phoneNumber;
+        document.getElementById('preview-room-en').innerText = state.roomNumber;
+        document.getElementById('preview-date-en').innerText = localizeDate(state.startDate, 'en');
+        document.getElementById('preview-start-date-en').innerText = localizeDate(state.startDate, 'en');
+        document.getElementById('preview-end-date-en').innerText = localizeDate(state.expectedEndDate, 'en');
+        
+        const tbodyEn = document.getElementById('invoice-items-body-en');
+        tbodyEn.innerHTML = `<tr><td>RENT - ROOM ${state.roomNumber}<br><small style="color:#64748b">PERIOD: ${localizeDate(state.startDate,'en')} - ${localizeDate(state.expectedEndDate,'en')}</small></td><td style="text-align:right">${formatCurrencyEN(state.monthlyCost)}</td><td style="text-align:center">${state.monthsPaid}</td><td style="text-align:right">${formatCurrencyEN(state.monthsPaid*state.monthlyCost)}</td></tr>`;
+        if (state.discountApplied) {
+          tbodyEn.innerHTML += `<tr class="discount-row"><td>${state.discountTextEn}</td><td>-</td><td>-</td><td style="text-align:right">-${formatCurrencyEN(state.discountAmt)}</td></tr>`;
+        }
+        tbodyEn.innerHTML += `<tr class="total-row"><td colspan="3">TOTAL DUE</td><td style="text-align:right">${formatCurrencyEN(state.calculatedTotalCost)}</td></tr>`;
+        
+        document.getElementById('preview-subtotal-en').innerText = formatCurrencyEN(state.monthsPaid * state.monthlyCost);
+        document.getElementById('preview-total-cost-en').innerText = formatCurrencyEN(state.calculatedTotalCost);
+        document.getElementById('preview-amount-paid-en').innerText = formatCurrencyEN(state.amountPaid);
+        
+        const balRowEn = document.getElementById('preview-balance-row-en');
+        const balValEn = document.getElementById('preview-balance-val-en');
+        const balLabelEn = document.getElementById('preview-balance-label-en');
+        const statusEn = document.getElementById('preview-status-en');
+        
+        balRowEn.className = 'summary-row balance ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+        statusEn.className = 'status-badge ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+        balLabelEn.innerText = state.balanceAmount <= 0 ? 'CREDIT:' : 'BALANCE DUE:';
+        balValEn.innerText = formatCurrencyEN(Math.abs(state.balanceAmount));
+        statusEn.innerText = state.paymentStatus;
+      } else {
+        // FR
+        document.getElementById('preview-invoice-no-fr').innerText = state.invoiceNumber;
+        document.getElementById('preview-tenant-fr').innerText = state.tenantName;
+        document.getElementById('preview-phone-fr').innerText = state.phoneNumber;
+        document.getElementById('preview-room-fr').innerText = state.roomNumber;
+        document.getElementById('preview-date-fr').innerText = localizeDate(state.startDate, 'fr');
+        document.getElementById('preview-start-date-fr').innerText = localizeDate(state.startDate, 'fr');
+        document.getElementById('preview-end-date-fr').innerText = localizeDate(state.expectedEndDate, 'fr');
+        
+        const tbodyFr = document.getElementById('invoice-items-body-fr');
+        tbodyFr.innerHTML = `<tr><td>LOYER - CHAMBRE ${state.roomNumber}<br><small style="color:#64748b">PÉRIODE: ${localizeDate(state.startDate,'fr')} - ${localizeDate(state.expectedEndDate,'fr')}</small></td><td style="text-align:right">${formatCurrencyFR(state.monthlyCost)}</td><td style="text-align:center">${state.monthsPaid}</td><td style="text-align:right">${formatCurrencyFR(state.monthsPaid*state.monthlyCost)}</td></tr>`;
+        if (state.discountApplied) {
+          tbodyFr.innerHTML += `<tr class="discount-row"><td>${state.discountTextFr}</td><td>-</td><td>-</td><td style="text-align:right">-${formatCurrencyFR(state.discountAmt)}</td></tr>`;
+        }
+        tbodyFr.innerHTML += `<tr class="total-row"><td colspan="3">MONTANT TOTAL DÛ</td><td style="text-align:right">${formatCurrencyFR(state.calculatedTotalCost)}</td></tr>`;
+        
+        document.getElementById('preview-subtotal-fr').innerText = formatCurrencyFR(state.monthsPaid * state.monthlyCost);
+        document.getElementById('preview-total-cost-fr').innerText = formatCurrencyFR(state.calculatedTotalCost);
+        document.getElementById('preview-amount-paid-fr').innerText = formatCurrencyFR(state.amountPaid);
+        
+        const balRowFr = document.getElementById('preview-balance-row-fr');
+        const balValFr = document.getElementById('preview-balance-val-fr');
+        const balLabelFr = document.getElementById('preview-balance-label-fr');
+        const statusFr = document.getElementById('preview-status-fr');
+        
+        balRowFr.className = 'summary-row balance ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+        statusFr.className = 'status-badge ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
+        balLabelFr.innerText = state.balanceAmount <= 0 ? 'CRÉDIT:' : 'RESTE À PAYER:';
+        balValFr.innerText = formatCurrencyFR(Math.abs(state.balanceAmount));
+        statusFr.innerText = state.paymentStatus === 'FULLY PAID' ? 'ENTIÈREMENT PAYÉ' : 'PARTIELLEMENT PAYÉ';
       }
-      tbodyFr.innerHTML += `<tr class="total-row"><td colspan="3">MONTANT TOTAL DÛ</td><td style="text-align:right">${formatCurrencyFR(state.calculatedTotalCost)}</td></tr>`;
-      
-      document.getElementById('preview-subtotal-fr').innerText = formatCurrencyFR(state.monthsPaid * state.monthlyCost);
-      document.getElementById('preview-total-cost-fr').innerText = formatCurrencyFR(state.calculatedTotalCost);
-      document.getElementById('preview-amount-paid-fr').innerText = formatCurrencyFR(state.amountPaid);
-      
-      const balRowFr = document.getElementById('preview-balance-row-fr');
-      const balValFr = document.getElementById('preview-balance-val-fr');
-      const balLabelFr = document.getElementById('preview-balance-label-fr');
-      const statusFr = document.getElementById('preview-status-fr');
-      
-      balRowFr.className = 'summary-row balance ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
-      statusFr.className = 'status-badge ' + (state.paymentStatus === 'FULLY PAID' ? 'paid' : 'partial');
-      balLabelFr.innerText = state.balanceAmount <= 0 ? 'CRÉDIT:' : 'RESTE À PAYER:';
-      balValFr.innerText = formatCurrencyFR(Math.abs(state.balanceAmount));
-      statusFr.innerText = state.paymentStatus === 'FULLY PAID' ? 'ENTIÈREMENT PAYÉ' : 'PARTIELLEMENT PAYÉ';
 
+      handleScaling();
       queueQRGeneration();
     }
 
@@ -1701,13 +1779,13 @@
     function downloadPDF() {
       const form = document.getElementById('invoice-form');
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      const element = document.querySelector('.scale-container');
+      
+      // Capture ONLY the active language page
+      const activeElement = document.querySelector('.a4-page.active');
       const wrapper = document.querySelector('.scale-wrapper');
-      
-      // Capture current scale to restore later
+      if (!activeElement) return;
+
       const currentScale = getComputedStyle(wrapper).getPropertyValue('--preview-scale');
-      
-      // Set scale to 1 for clean PDF capture
       wrapper.style.setProperty('--preview-scale', '1');
       wrapper.style.height = 'auto';
 
@@ -1715,20 +1793,11 @@
         margin: 0, 
         filename: `Sanctuaire_${state.invoiceNumber}.pdf`, 
         image: { type: 'jpeg', quality: 1.0 }, 
-        html2canvas: { 
-          scale: 4, // Ultra-crisp quality
-          useCORS: true, 
-          letterRendering: true,
-          scrollY: 0,
-          dpi: 300,
-          imageTimeout: 0
-        }, 
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'], before: '.a4-page' }
+        html2canvas: { scale: 4, useCORS: true, letterRendering: true, scrollY: 0, dpi: 300 }, 
+        jsPDF: { unit: 'mm', format: state.selectedPaperSize, orientation: 'portrait', compress: true }
       };
       
-      html2pdf().set(opt).from(element).save().then(() => {
-        // Restore scaling after download
+      html2pdf().set(opt).from(activeElement).save().then(() => {
         wrapper.style.setProperty('--preview-scale', currentScale);
         handleScaling();
       });
@@ -1738,9 +1807,13 @@
       const p = document.querySelector('.preview-panel');
       const w = document.querySelector('.scale-wrapper');
       if (!p || !w) return;
-      const scale = Math.min((p.clientWidth - 40) / (210 * 3.78), 1);
+      
+      const physWidthMm = state.selectedPaperSize === 'letter' ? 215.9 : 210;
+      const physHeightMm = state.selectedPaperSize === 'letter' ? 279.4 : 297;
+      
+      const scale = Math.min((p.clientWidth - 40) / (physWidthMm * 3.78), 1);
       w.style.setProperty('--preview-scale', scale);
-      w.style.height = `${((297 * 2) + 10) * 3.78 * scale}px`;
+      w.style.height = `${(physHeightMm + 10) * 3.78 * scale}px`;
     }
 
     function printInvoice() {
