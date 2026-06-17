@@ -1746,9 +1746,14 @@
     }
 
     function generateQRCodes() {
-      // Concisely build strings to stay within QR limits
-      const qrEn = `SANCTUAIRE INTELLOS\nNo: ${state.invoiceNumber}\nTenant: ${state.tenantName}\nPaid: ${formatCurrencyEN(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'en')}`;
-      const qrFr = `SANCTUAIRE INTELLOS\nNo: ${state.invoiceNumber}\nLocataire: ${state.tenantName}\nPaye: ${formatCurrencyFR(state.amountPaid)}\nDate: ${localizeDate(state.startDate, 'fr')}`;
+      // UTF-8 encoding helper for names with accents
+      const toUTF8 = (str) => {
+        try { return unescape(encodeURIComponent(str)); } 
+        catch(e) { return str; }
+      };
+
+      // Use ONE universal string for both languages to avoid complications
+      const universalQR = toUTF8(`SANCTUAIRE INTELLOS\nID: ${state.invoiceNumber}\nTENANT: ${state.tenantName}\nPAID: ${formatCurrencyEN(state.amountPaid)}\nDATE: ${localizeDate(state.startDate, 'en')}`);
       
       const dEn = document.getElementById('qrcode-en');
       const dFr = document.getElementById('qrcode-fr');
@@ -1760,28 +1765,27 @@
       if (typeof QRCode !== 'undefined') {
         try {
           const config = { 
-            width: 256, // Higher internal resolution for more data
+            width: 256, 
             height: 256, 
             colorDark: '#0b1b33',
             correctLevel: QRCode.CorrectLevel.L
           };
 
+          // Generate the exact same code for both containers
           if (state.selectedLanguage === 'en') {
-            new QRCode(dEn, { ...config, text: qrEn });
+            new QRCode(dEn, { ...config, text: universalQR });
           } else {
-            new QRCode(dFr, { ...config, text: qrFr });
+            new QRCode(dFr, { ...config, text: universalQR });
           }
 
-          // Ensure images fit their 160px container
-          const imgs = document.querySelectorAll('.qrcode-wrapper img');
-          imgs.forEach(img => {
-            img.style.width = '160px';
-            img.style.height = '160px';
+          // Force responsive sizing
+          const elements = document.querySelectorAll('.qrcode-wrapper canvas, .qrcode-wrapper img');
+          elements.forEach(el => {
+            el.style.width = '160px';
+            el.style.height = '160px';
           });
         } catch (err) {
-          console.error("QR Generation error:", err);
-          const errDiv = state.selectedLanguage === 'en' ? dEn : dFr;
-          errDiv.innerHTML = '<small class="text-danger" style="font-size:8px;">DATA OVERFLOW</small>';
+          console.error("QR Error:", err);
         }
       }
     }
